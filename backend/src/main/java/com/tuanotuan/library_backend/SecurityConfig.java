@@ -13,11 +13,15 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Tắt cái này để lát nữa làm Login cho dễ
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/books/**").permitAll() // Cho phép xem sách KHÔNG cần login
+                        .requestMatchers("/api/books/**", "/api/auth/**").permitAll()
                         .anyRequest().authenticated() // Các đường dẫn khác vẫn phải login
                 )
                 .formLogin(form -> form.permitAll()); // Vẫn giữ trang login để test
 
         return http.build();
+    }
+    @Bean
+    public org.springframework.security.crypto.password.PasswordEncoder passwordEncoder() {
+        return new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
     }
 }
