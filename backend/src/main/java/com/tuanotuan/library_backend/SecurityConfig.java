@@ -11,12 +11,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Tắt cái này để lát nữa làm Login cho dễ
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/books/**", "/api/auth/**").permitAll()
-                        .anyRequest().authenticated() // Các đường dẫn khác vẫn phải login
+                        .anyRequest().authenticated()
                 )
-                .formLogin(form -> form.permitAll()); // Vẫn giữ trang login để test
+                // 1. XÓA DÒNG .formLogin(...) ĐI
+
+                // 2. THÊM DÒNG NÀY: Bảo Spring đừng tạo Session nữa (Vì mình dùng JWT rồi)
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS)
+                );
 
         return http.build();
     }

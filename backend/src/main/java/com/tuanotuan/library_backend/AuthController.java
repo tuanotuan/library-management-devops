@@ -22,4 +22,21 @@ public class AuthController {
         userRepository.save(user);
         return "Đăng ký thành công cho user: " + user.getUsername();
     }
+    @Autowired
+    private JwtUtil jwtUtil; // Gọi xưởng in thẻ bài ra
+
+    @PostMapping("/login")
+    public String login(@RequestBody User user) {
+        // 1. Tìm thằng User trong DB theo Username
+        User dbUser = userRepository.findByUsername(user.getUsername())
+                .orElseThrow(() -> new RuntimeException("Đéo tìm thấy User!"));
+
+        // 2. Kiểm tra xem mật khẩu gửi lên có khớp với mật khẩu "đã xay" trong DB không
+        if (passwordEncoder.matches(user.getPassword(), dbUser.getPassword())) {
+            // 3. Nếu khớp thì in Thẻ bài (Token) trả về cho nó đi bar
+            return jwtUtil.generateToken(dbUser.getUsername());
+        } else {
+            return "Sai mật khẩu rồi mày ơi!";
+        }
+    }
 }
