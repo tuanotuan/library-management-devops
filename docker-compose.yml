@@ -1,15 +1,43 @@
+version: '3.8'
+
 services:
+  # 1. Thằng Database (Mày đã có sẵn rồi, giờ mình đưa vào đây quản lý luôn)
   db:
     image: postgres:15-alpine
     container_name: library-db
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: tuanotuan
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: library_db
     ports:
       - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U tuanotuan -d library_db" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-volumes:
-  postgres_data:
+  # 2. Thằng Backend (Cái Image mày vừa build xong đấy)
+  backend:
+    build: backend
+    container_name: library-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Đường dẫn kết nối
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/library_db
+      # HAI DÒNG NÀY LÀ CHÌA KHÓA NÈ MÀY:
+      SPRING_DATASOURCE_USERNAME: tuanotuan
+      SPRING_DATASOURCE_PASSWORD: mysecretpassword
+  frontend:
+    build: ./frontend
+    container_name: library-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8080/api
