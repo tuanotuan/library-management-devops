@@ -13,10 +13,10 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       // Gọi API lấy "Thẻ bài"
-      const response = await axios.post("http://localhost:8080/api/auth/login", {
-        username,
-        password,
-      });
+      const response = await axios.post("/api/auth/login", {
+    username,
+    password,
+});
       
       const token = response.data; // Đây là chuỗi eyJ...
       

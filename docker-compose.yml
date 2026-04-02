@@ -33,7 +33,7 @@ services:
       SPRING_DATASOURCE_USERNAME: tuanotuan
       SPRING_DATASOURCE_PASSWORD: mysecretpassword
   frontend:
-    build: ./frontend
+    image: tuanotuan/library-frontend:latest
     container_name: library-frontend
     ports:
       - "3000:3000"

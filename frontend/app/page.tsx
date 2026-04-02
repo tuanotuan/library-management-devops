@@ -7,7 +7,7 @@ export default function Home() {
 
   useEffect(() => {
     // Gọi API từ Backend Java (Cổng 8080)
-    axios.get('http://localhost:8080/api/books')
+    axios.get('/api/books')
       .then(res => setBooks(res.data))
       .catch(err => console.error("Lỗi rồi mày ơi:", err));
   }, []);
