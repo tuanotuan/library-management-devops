@@ -40,6 +40,16 @@ pipeline {
                     sh "docker push ${DOCKER_HUB_USER}/${IMAGE_NAME}:latest"
                 }
             }
+            
+        }
+        stage('Deploy to Web Server') {
+            steps {
+                // Gọi cái chìa khóa vạn năng mày tạo lúc nãy
+                sshagent(['web-server-creds']) {
+                    // Thay IP_SERVER_WEB bằng IP con EC2 cũ (con chạy Nginx)
+                    sh "ssh -o StrictHostKeyChecking=no ubuntu@52.77.117.33 'cd ~/library-project && docker compose pull backend && docker compose up -d backend'"
+                }
+            }
         }
     }
 
