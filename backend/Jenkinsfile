@@ -1,19 +1,15 @@
 pipeline {
     agent any
+
+    // Chỉ 1 block tools
     tools {
         dockerTool 'my-docker'
     }
 
+    // Chỉ 1 block environment DUY NHẤT chứa tất cả biến
     environment {
-        DOCKER_HUB_USER = 'tuanotuan' // Nhớ check lại username cho chuẩn
-        IMAGE_NAME = 'backend-library'
-        DOCKER_HUB_CREDS = credentials('docker-hub-creds')
-    }
-    environment {
-        // Thay 'tuanit' bằng Username Docker Hub của mày
         DOCKER_HUB_USER = 'tuanotuan' 
         IMAGE_NAME = 'backend-library'
-        // Gọi đúng cái ID mày vừa tạo ở bước trước
         DOCKER_HUB_CREDS = credentials('docker-hub-creds')
     }
 
@@ -27,7 +23,6 @@ pipeline {
         stage('Unit Test') {
             steps {
                 echo 'Đang chạy JUnit 5... (Giả lập pass 100%)'
-                // Sau này mày cài Maven/Gradle thì chạy lệnh test thật ở đây
                 sh 'echo "Tests passed!"'
             }
         }
@@ -35,8 +30,8 @@ pipeline {
         stage('Build & Push Docker Image') {
             steps {
                 script {
-                    // Đăng nhập Docker Hub dùng Credentials đã lưu
-                    sh "echo $DOCKER_HUB_CREDS_PSW | docker login -u $DOCKER_HUB_CREDS_USR --password-stdin"
+                    // Dùng dấu nháy đơn '' để tránh lỗi bảo mật nội suy chuỗi (interpolation)
+                    sh 'echo $DOCKER_HUB_CREDS_PSW | docker login -u $DOCKER_HUB_CREDS_USR --password-stdin'
                     
                     // Build image
                     sh "docker build -t ${DOCKER_HUB_USER}/${IMAGE_NAME}:latest ."
