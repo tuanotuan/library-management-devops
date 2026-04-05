@@ -34,7 +34,7 @@ pipeline {
                     sh 'echo $DOCKER_HUB_CREDS_PSW | docker login -u $DOCKER_HUB_CREDS_USR --password-stdin'
                     
                     // Build image
-                    sh "docker build -t ${DOCKER_HUB_USER}/${IMAGE_NAME}:latest ."
+                    sh "docker build -t ${DOCKER_HUB_USER}/${IMAGE_NAME}:latest -f backend/Dockerfile backend"
                     
                     // Push lên Docker Hub
                     sh "docker push ${DOCKER_HUB_USER}/${IMAGE_NAME}:latest"
