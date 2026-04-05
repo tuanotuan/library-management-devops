@@ -1,6 +1,14 @@
 pipeline {
     agent any
+    tools {
+        dockerTool 'my-docker'
+    }
 
+    environment {
+        DOCKER_HUB_USER = 'tuanotuan' // Nhớ check lại username cho chuẩn
+        IMAGE_NAME = 'backend-library'
+        DOCKER_HUB_CREDS = credentials('docker-hub-creds')
+    }
     environment {
         // Thay 'tuanit' bằng Username Docker Hub của mày
         DOCKER_HUB_USER = 'tuanotuan' 
